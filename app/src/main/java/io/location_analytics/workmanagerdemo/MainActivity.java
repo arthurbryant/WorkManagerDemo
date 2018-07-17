@@ -9,6 +9,14 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.concurrent.TimeUnit;
+
+import androidx.work.Constraints;
+import androidx.work.NetworkType;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+import io.location_analytics.workmanagerdemo.workers.LocationWorker;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -26,6 +34,11 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        // Start LocationWorker
+        Constraints constraints = new Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build();
+        PeriodicWorkRequest request = new PeriodicWorkRequest.Builder(LocationWorker.class, 15, TimeUnit.MINUTES).setConstraints(constraints).build();
+        WorkManager.getInstance().enqueue(request);
     }
 
     @Override
